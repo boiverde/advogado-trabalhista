@@ -67,6 +67,12 @@ const schema = {
     fields: [
       { name: "footerCopyright", label: "Footer Copyright Text", type: "text" }
     ]
+  },
+  license: {
+    id: "license", icon: "🔑", title: "9. System License",
+    fields: [
+      { name: "licenseKey", label: "License Key", type: "text", placeholder: "Enter your product license key", help: "Required to remove demo badges and for future functionality." }
+    ]
   }
 };
 
@@ -130,13 +136,31 @@ function populateForm(cfg) {
       if(cfg.showChatbot === undefined) cfg.showChatbot = true;
   }
 
+  // Create inputs
   Object.keys(cfg).forEach(key => {
-    const el = formEl.elements[key];
-    if (el) {
-      if (el.type === 'checkbox') el.checked = !!cfg[key];
-      else el.value = cfg[key];
+    let input = document.getElementById(`field_${key}`);
+    if (input) {
+      if (input.type === 'checkbox') input.checked = cfg[key];
+      else input.value = cfg[key];
     }
   });
+
+  // Update License Badge
+  const badge = document.getElementById('admin-license-badge');
+  if (badge) {
+    if (cfg.licenseKey && cfg.licenseKey.trim().length > 0) {
+      badge.innerHTML = "✔ License active";
+      badge.style.backgroundColor = "rgba(16, 185, 129, 0.15)";
+      badge.style.color = "#059669";
+      badge.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+    } else {
+      badge.innerHTML = "⚠️ No license detected";
+      badge.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+      badge.style.color = "#dc2626";
+      badge.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+    }
+  }
+
 }
 
 populateForm(currentConfig);
