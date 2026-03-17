@@ -1,6 +1,6 @@
 const schema = {
   branding: {
-    id: "branding", title: "1. Branding & Identity",
+    id: "branding", icon: "🏢", title: "1. Branding & Identity",
     fields: [
       { name: "lawFirmName", label: "Law Firm Name", type: "text", placeholder: "Your Law Firm Name" },
       { name: "lawFirmSubtitle", label: "Subtitle / Niche", type: "text", placeholder: "Labor Law Specialists" },
@@ -9,16 +9,16 @@ const schema = {
     ]
   },
   contact: {
-    id: "contact", title: "2. Contact & CTA",
+    id: "contact", icon: "📞", title: "2. Contact & CTA",
     fields: [
-      { name: "whatsappNumber", label: "WhatsApp Number", type: "text", placeholder: "5511999999999", help: "Important: Country code + area code + number. Only numbers." },
+      { name: "whatsappNumber", label: "WhatsApp Number", type: "text", placeholder: "5511999999999", help: "Enter WhatsApp with country code (e.g. 5511999999999)" },
       { name: "contactEmail", label: "Contact Email", type: "text", placeholder: "your@email.com" },
       { name: "ctaMain", label: "Main CTA Button Text", type: "text", placeholder: "Get Clients via WhatsApp Now" },
       { name: "ctaSecondary", label: "Secondary CTA Button Text", type: "text", placeholder: "Get a free case evaluation" }
     ]
   },
   hero: {
-    id: "hero", title: "3. Hero Section",
+    id: "hero", icon: "🚀", title: "3. Hero Section",
     fields: [
       { name: "heroBadge", label: "Top Badge Text", type: "text", placeholder: "🚀 Built for High Conversion" },
       { name: "heroHeadline", label: "Main Headline (HTML <span> allowed)", type: "textarea", placeholder: "Have you been fired..." },
@@ -27,7 +27,7 @@ const schema = {
     ]
   },
   social: {
-    id: "social", title: "4. Social Proof Numbers",
+    id: "social", icon: "⭐", title: "4. Social Proof Numbers",
     fields: [
       { name: "stat1Value", label: "Stat 1 Value", type: "text", half: true },
       { name: "stat1Label", label: "Stat 1 Label", type: "text", half: true },
@@ -38,7 +38,7 @@ const schema = {
     ]
   },
   cases: {
-    id: "cases", title: "5. Case Results (Editable Card 1)",
+    id: "cases", icon: "📊", title: "5. Case Results (Editable Card 1)",
     fields: [
       { name: "caseTitle", label: "Case Title", type: "text" },
       { name: "caseProblem", label: "Case Problem", type: "textarea" },
@@ -47,7 +47,7 @@ const schema = {
     ]
   },
   testimonials: {
-    id: "testimonials", title: "6. Testimonials (Editable Card 1)",
+    id: "testimonials", icon: "💬", title: "6. Testimonials (Editable Card 1)",
     fields: [
       { name: "testName", label: "Client Name", type: "text" },
       { name: "testRole", label: "Client Role", type: "text" },
@@ -55,7 +55,7 @@ const schema = {
     ]
   },
   chatbot: {
-    id: "chatbot", title: "7. Virtual Assistant Settings",
+    id: "chatbot", icon: "🤖", title: "7. Virtual Assistant Settings",
     fields: [
       { name: "showChatbot", label: "Enable Virtual Assistant Section", type: "checkbox" },
       { name: "assistantName", label: "Virtual Assistant Name", type: "text", placeholder: "Virtual Assistant" },
@@ -63,7 +63,7 @@ const schema = {
     ]
   },
   settings: {
-    id: "settings", title: "8. Display Settings & Footer",
+    id: "settings", icon: "⚙️", title: "8. Display Settings & Footer",
     fields: [
       { name: "showFeatures", label: "Show Template Features Section", type: "checkbox" },
       { name: "showPerfectFor", label: "Show Perfect For Section", type: "checkbox" },
@@ -80,10 +80,17 @@ let navHtml = '';
 let formHtml = '';
 
 Object.values(schema).forEach(section => {
-  navHtml += `<a href="#${section.id}">${section.title.split('. ')[1]}</a>`;
+  navHtml += `
+    <a href="#${section.id}" class="nav-item">
+      <span class="nav-icon">${section.icon}</span>
+      <span class="nav-text">${section.title.split('. ')[1]}</span>
+    </a>`;
   
   formHtml += `<div class="section-panel" id="${section.id}">
-    <h3>${section.title}</h3>`;
+    <div class="section-header-row">
+       <span class="section-icon">${section.icon}</span>
+       <h3>${section.title}</h3>
+    </div>`;
     
   let openTwoCol = false;
   
@@ -140,10 +147,88 @@ function populateForm(cfg) {
 
 populateForm(currentConfig);
 
-// Validations
+// Unsaved Changes State Logic
+const statusBadge = document.getElementById('save-status');
+const statusText = statusBadge.querySelector('.status-text');
+let isSaved = true;
+
+function markUnsaved() {
+    if(!isSaved) return;
+    isSaved = false;
+    statusBadge.classList.remove('saved');
+    statusBadge.classList.add('unsaved');
+    statusText.innerText = 'Unsaved Changes';
+}
+
+function markSaved() {
+    isSaved = true;
+    statusBadge.classList.remove('unsaved');
+    statusBadge.classList.add('saved');
+    statusText.innerText = 'Saved';
+}
+
+formEl.addEventListener('input', markUnsaved);
+formEl.addEventListener('change', markUnsaved);
+
+// WA Live Preview Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const waInput = document.querySelector('input[name="whatsappNumber"]');
+    if(waInput) {
+        waInput.insertAdjacentHTML('afterend', `
+            <div id="wa-preview" class="wa-preview">
+                <div class="wa-preview-header">
+                    <span id="wa-preview-status">✅ WhatsApp Link Ready</span>
+                    <button type="button" class="wa-copy-btn" id="wa-copy-btn">Copy Link</button>
+                </div>
+                <div class="wa-preview-link" id="wa-link-text"></div>
+            </div>
+        `);
+        
+        const previewBox = document.getElementById('wa-preview');
+        const linkText = document.getElementById('wa-link-text');
+        const copyBtn = document.getElementById('wa-copy-btn');
+        const statusIconTxt = document.getElementById('wa-preview-status');
+        
+        function updateWaPreview() {
+            const val = waInput.value.trim().replace(/\D/g,''); // allow only digits
+            if(!val) {
+                previewBox.style.display = 'none';
+                return; 
+            }
+            previewBox.style.display = 'flex';
+            
+            // Simple validation: strictly digits, size between 10-15
+            if(val.length >= 10 && val.length <= 15) {
+                previewBox.classList.remove('error');
+                statusIconTxt.innerText = '✅ Active WhatsApp Link';
+                const link = `https://wa.me/${val}`;
+                linkText.innerText = link;
+                copyBtn.style.display = 'block';
+            } else {
+                previewBox.classList.add('error');
+                statusIconTxt.innerText = '⚠️ Invalid Form (Need 10-15 Digits)';
+                linkText.innerText = 'Please ensure you added country code. Letters are ignored.';
+                copyBtn.style.display = 'none';
+            }
+        }
+        
+        waInput.addEventListener('input', updateWaPreview);
+        updateWaPreview();
+        
+        copyBtn.addEventListener('click', (e) => {
+             e.preventDefault();
+             navigator.clipboard.writeText(linkText.innerText);
+             const og = copyBtn.innerText;
+             copyBtn.innerText = 'Copied!';
+             setTimeout(() => copyBtn.innerText = og, 2000);
+        });
+    }
+});
+
+
 function runValidations(cfg) {
     if(!cfg.whatsappNumber || cfg.whatsappNumber.trim() === '') {
-        alert("Warning: WhatsApp Number is empty! Links will not work correctly until you provide a number.");
+        console.warn("WhatsApp Number is empty.");
     }
 }
 
@@ -166,9 +251,10 @@ document.getElementById('btn-save').addEventListener('click', (e) => {
   runValidations(cfg);
 
   localStorage.setItem('lawyer_template_config', JSON.stringify(cfg));
+  markSaved();
   
   const toast = document.getElementById('toast');
-  toast.innerText = '✅ Changes Saved Successfully!';
+  document.getElementById('toast-desc').innerText = 'Your template customizations have been applied securely.';
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 });
@@ -179,10 +265,24 @@ document.getElementById('btn-reset').addEventListener('click', (e) => {
      localStorage.removeItem('lawyer_template_config');
      currentConfig = {};
      populateForm(currentConfig);
+     markSaved();
+     
+     // trigger input events manually to format preview box
+     const waInput = document.querySelector('input[name="whatsappNumber"]');
+     if(waInput) {
+         waInput.dispatchEvent(new Event('input'));
+     }
+
      const toast = document.getElementById('toast');
-     toast.innerText = '🗑 Settings Reset to Defaults!';
+     toast.querySelector('strong').innerText = 'Template Reset';
+     document.getElementById('toast-desc').innerText = 'Settings removed back to defaults.';
      toast.classList.add('show');
-     setTimeout(() => toast.classList.remove('show'), 3000);
+     setTimeout(() => {
+         toast.classList.remove('show');
+         setTimeout(()=> {
+             toast.querySelector('strong').innerText = 'Changes saved successfully';
+         }, 500);
+     }, 3000);
   }
 });
 
@@ -207,10 +307,22 @@ document.getElementById('btn-import').addEventListener('change', (e) => {
       const parsed = JSON.parse(evt.target.result);
       localStorage.setItem('lawyer_template_config', JSON.stringify(parsed));
       populateForm(parsed);
+      markUnsaved(); // they imported but want them to see they need to save or verify? Actually let's mark saved because we set format.
+      markSaved();
+      
+      const waInput = document.querySelector('input[name="whatsappNumber"]');
+      if(waInput) waInput.dispatchEvent(new Event('input'));
+
       const toast = document.getElementById('toast');
-      toast.innerText = '📥 Settings Imported Successfully!';
+      toast.querySelector('strong').innerText = 'Import Successful';
+      document.getElementById('toast-desc').innerText = 'Config loaded. Live preview updated.';
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      setTimeout(() => {
+         toast.classList.remove('show');
+         setTimeout(()=> {
+             toast.querySelector('strong').innerText = 'Changes saved successfully';
+         }, 500);
+     }, 3000);
     } catch(err) {
       alert("Invalid JSON file.");
     }
@@ -226,7 +338,7 @@ document.querySelector('.content').addEventListener('scroll', () => {
     const content = document.querySelector('.content');
     sections.forEach(sec => {
         const secTop = sec.offsetTop;
-        if (content.scrollTop >= secTop - 120) {
+        if (content.scrollTop >= secTop - 250) {
             current = sec.getAttribute('id');
         }
     });
