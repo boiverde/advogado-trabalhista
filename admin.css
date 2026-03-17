@@ -123,6 +123,38 @@ body { margin: 0; background-color: var(--bg); display: flex; height: 100vh; col
 .toast-content strong { font-size: 1rem; color: var(--primary); font-weight: 700; }
 .toast-content span { font-size: 0.85rem; color: var(--text-muted); }
 
+/* ONBOARDING MODAL */
+.onboarding-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 2000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+.onboarding-overlay.show { display: flex; opacity: 1; }
+.onboarding-modal { background: var(--surface); width: 100%; max-width: 480px; border-radius: var(--radius-lg); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative; overflow: hidden; transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 40px; text-align: center; }
+.onboarding-overlay.show .onboarding-modal { transform: translateY(0); }
+
+.onboarding-step { display: none; flex-direction: column; animation: fade-in-right 0.4s ease forwards; }
+.onboarding-step.active { display: flex; }
+.onboarding-step h2 { color: var(--primary); font-size: 1.6rem; margin: 0 0 12px; letter-spacing: -0.5px; }
+.onboarding-step p { color: var(--text-muted); margin: 0 0 24px; line-height: 1.5; font-size: 1rem; }
+
+.onboarding-icon { font-size: 3.5rem; margin-bottom: 20px; line-height: 1; display: block;}
+.onboarding-progress { font-size: 0.85rem; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+
+.onboarding-step .form-group { text-align: left; margin-bottom: 20px; }
+.onboarding-step input[type="text"] { font-size: 1.05rem; padding: 14px 18px; }
+
+.ob-error { color: var(--danger); font-size: 0.85rem; font-weight: 500; margin-top: 6px; display: none; text-align: left;}
+.ob-error.show { display: block; }
+.ob-input-error { border-color: var(--danger) !important; background-color: #fef2f2 !important; }
+.ob-input-success { border-color: var(--success) !important; background-color: #f0fdf4 !important; }
+
+.ob-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 10px; }
+.ob-actions .btn { flex: 1; padding: 12px; font-size: 1.05rem; }
+.ob-actions-vertical { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.ob-actions-vertical .btn { width: 100%; padding: 14px; font-size: 1.05rem; }
+
+@keyframes fade-in-right {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
 /* RESPONSIVE */
 @media(max-width: 1000px) {
   .admin-layout { flex-direction: column; }

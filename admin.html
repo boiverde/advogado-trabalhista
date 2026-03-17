@@ -22,6 +22,7 @@
             </nav>
             
             <div class="sidebar-actions">
+                <button id="btn-restart-onboarding" class="btn btn-outline">🔁 Restart Onboarding</button>
                 <button id="btn-reset" class="btn btn-outline btn-danger">♻️ Reset to Default</button>
                 <button id="btn-export" class="btn btn-outline">⬇️ Export Config JSON</button>
                 <div class="file-btn-wrapper">
@@ -65,6 +66,64 @@
         <div class="toast-content">
             <strong>Changes saved successfully</strong>
             <span id="toast-desc">Your template has been updated securely.</span>
+        </div>
+    </div>
+    
+    <!-- Onboarding Modal -->
+    <div id="onboarding-overlay" class="onboarding-overlay">
+        <div class="onboarding-modal">
+            <!-- Step 1: Welcome -->
+            <div class="onboarding-step active" id="step-1">
+                <div class="onboarding-icon">✨</div>
+                <h2>Welcome! Let's set up your landing page</h2>
+                <p>You can have your page ready in less than 2 minutes. You're 1 step away from getting clients on WhatsApp.</p>
+                <button class="btn btn-primary btn-next" data-next="2">Start Setup</button>
+            </div>
+            
+            <!-- Step 2: WhatsApp -->
+            <div class="onboarding-step" id="step-2">
+                <div class="onboarding-progress">Step 1 of 2</div>
+                <h2>Add your WhatsApp</h2>
+                <p>Where should we send your leads?</p>
+                <div class="form-group">
+                    <input type="text" id="ob-whatsapp" placeholder="5511999999999" autocomplete="off">
+                    <span class="form-text">Enter with country code (example: 5511999999999)</span>
+                    <div id="ob-wa-error" class="ob-error"></div>
+                </div>
+                <div class="ob-actions">
+                    <button class="btn btn-primary btn-next" id="btn-ob-next-2" data-next="3">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Branding -->
+            <div class="onboarding-step" id="step-3">
+                <div class="onboarding-progress">Step 2 of 2</div>
+                <h2>Your Name & Identity</h2>
+                <p>Make the page yours.</p>
+                <div class="form-group">
+                    <label>Law Firm Name</label>
+                    <input type="text" id="ob-firm" placeholder="e.g. Silva Law Group" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Lawyer Name</label>
+                    <input type="text" id="ob-lawyer" placeholder="e.g. Dr. John Doe" autocomplete="off">
+                </div>
+                <div class="ob-actions">
+                    <button class="btn btn-outline btn-prev" data-prev="2">Back</button>
+                    <button class="btn btn-primary btn-next" id="btn-ob-finish" data-next="4">Finish</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Final -->
+            <div class="onboarding-step" id="step-4">
+                <div class="onboarding-icon">🚀</div>
+                <h2>You're ready!</h2>
+                <p>Your landing page is now configured and ready to receive clients. Now just share your link.</p>
+                <div class="ob-actions-vertical">
+                    <a href="/index.html" target="_blank" class="btn btn-primary">Open My Landing Page</a>
+                    <button id="btn-ob-close" class="btn btn-outline">Go to Admin Panel</button>
+                </div>
+            </div>
         </div>
     </div>
     

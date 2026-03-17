@@ -350,3 +350,129 @@ document.querySelector('.content').addEventListener('scroll', () => {
         }
     });
 });
+
+// --- ONBOARDING LOGIC ---
+const obOverlay = document.getElementById('onboarding-overlay');
+const obSteps = document.querySelectorAll('.onboarding-step');
+const btnRestartOb = document.getElementById('btn-restart-onboarding');
+
+function showOnboarding() {
+    obOverlay.classList.add('show');
+    goToStep(1);
+    
+    // Pre-fill fields if config exists
+    const wa = currentConfig.whatsappNumber || '';
+    const firm = currentConfig.lawFirmName || '';
+    const lawyer = currentConfig.lawyerName || '';
+    
+    document.getElementById('ob-whatsapp').value = wa;
+    document.getElementById('ob-firm').value = firm;
+    document.getElementById('ob-lawyer').value = lawyer;
+}
+
+function closeOnboarding() {
+    obOverlay.classList.remove('show');
+}
+
+function goToStep(stepNum) {
+    obSteps.forEach(s => s.classList.remove('active'));
+    document.getElementById(`step-${stepNum}`).classList.add('active');
+}
+
+// Check if onboarding is needed
+if (localStorage.getItem('hasCompletedOnboarding') !== 'true') {
+    showOnboarding();
+}
+
+if(btnRestartOb) {
+    btnRestartOb.addEventListener('click', () => {
+        localStorage.removeItem('hasCompletedOnboarding');
+        showOnboarding();
+    });
+}
+
+// WA validation for onboarding
+const obWaInput = document.getElementById('ob-whatsapp');
+const obWaError = document.getElementById('ob-wa-error');
+
+if(obWaInput) {
+    obWaInput.addEventListener('input', () => {
+        const val = obWaInput.value.replace(/\D/g, '');
+        if (val.length >= 10 && val.length <= 15) {
+            obWaInput.classList.remove('ob-input-error');
+            obWaInput.classList.add('ob-input-success');
+            obWaError.classList.remove('show');
+        } else if (val.length > 0) {
+            obWaInput.classList.remove('ob-input-success');
+            obWaInput.classList.add('ob-input-error');
+            obWaError.innerText = '⚠️ Invalid WhatsApp number (needs country code, 10-15 digits).';
+            obWaError.classList.add('show');
+        } else {
+            obWaInput.classList.remove('ob-input-success', 'ob-input-error');
+            obWaError.classList.remove('show');
+        }
+    });
+}
+
+document.querySelectorAll('.btn-next').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const nextStep = parseInt(e.currentTarget.dataset.next);
+        
+        // Save current step data logic
+        if (nextStep === 3) { // Going from step 2 to 3
+            const waVal = obWaInput.value.replace(/\D/g, '');
+            if (waVal.length < 10 || waVal.length > 15) {
+                obWaInput.classList.add('ob-input-error');
+                obWaError.innerText = 'Please enter a valid WhatsApp number before continuing.';
+                obWaError.classList.add('show');
+                return; // Stop transition
+            }
+            // Save to currentConfig
+            currentConfig.whatsappNumber = waVal;
+            saveAndPopulate();
+        } else if (nextStep === 4) { // Going from step 3 to 4
+            const firm = document.getElementById('ob-firm').value;
+            const lawyer = document.getElementById('ob-lawyer').value;
+            
+            if (firm) currentConfig.lawFirmName = firm;
+            if (lawyer) currentConfig.lawyerName = lawyer;
+            
+            saveAndPopulate();
+            // Finish onboarding
+            localStorage.setItem('hasCompletedOnboarding', 'true');
+            
+            // Show toast
+            const toast = document.getElementById('toast');
+            toast.querySelector('strong').innerText = 'Page ready!';
+            document.getElementById('toast-desc').innerText = 'Your landing page is configured and ready.';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        goToStep(nextStep);
+    });
+});
+
+document.querySelectorAll('.btn-prev').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const prevStep = parseInt(e.currentTarget.dataset.prev);
+        goToStep(prevStep);
+    });
+});
+
+const obCloseBtn = document.getElementById('btn-ob-close');
+if(obCloseBtn) {
+    obCloseBtn.addEventListener('click', closeOnboarding);
+}
+
+function saveAndPopulate() {
+    localStorage.setItem('lawyer_template_config', JSON.stringify(currentConfig));
+    populateForm(currentConfig);
+    markSaved();
+    
+    // trigger input events manually to format preview box
+    const waInput = document.querySelector('input[name="whatsappNumber"]');
+    if(waInput) {
+        waInput.dispatchEvent(new Event('input'));
+    }
+}
