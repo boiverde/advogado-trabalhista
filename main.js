@@ -103,22 +103,6 @@ function applyDynamicConfig() {
     if (c.footerCopyright) {
         replaceText('.copyright', c.footerCopyright);
     }
-    
-    // License Badge
-    const navContent = document.querySelector('.navbar .nav-content');
-    if (navContent) {
-        const badge = document.createElement('div');
-        badge.className = 'public-license-badge';
-        if (c.licenseKey && c.licenseKey.trim().length > 0) {
-            badge.innerHTML = '✔ Licensed version';
-            badge.classList.add('licensed');
-        } else {
-            const isEnglish = document.documentElement.lang === 'en';
-            badge.innerHTML = isEnglish ? '⚠️ Demo version' : '⚠️ Versão de Demonstração';
-            badge.classList.add('demo');
-        }
-        navContent.appendChild(badge);
-    }
 
   } catch (err) {
       console.warn('Failed to parse admin customizations.', err);
