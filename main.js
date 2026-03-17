@@ -10,51 +10,16 @@ function getWhatsAppUrl(message) {
 
 // 1. Update all generic WhatsApp Links on page load
 document.addEventListener('DOMContentLoaded', () => {
-  // Select hero button, CTA button, and floating button
   const whatsappButtons = document.querySelectorAll('#hero-whatsapp-btn, .cta-wpp, .floating-wpp');
   
   whatsappButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      // If it's the floating button and it's trying to scroll to contact section
-      // we can optionally change it to go directly to WA instead!
-      // Here we will just make them open WA directly to maximize conversion.
       e.preventDefault();
       window.open(getWhatsAppUrl(), '_blank');
     });
   });
 
-  // 2. Handle Contact Form Submission
-  const contactForm = document.getElementById('contact-form');
-  
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const nome = document.getElementById('name').value;
-      const telefone = document.getElementById('phone').value; // Collecting for metrics if we had a backend
-      const relato = document.getElementById('message').value;
-
-      let customMessage = `*Novo Contato via Site*\n\n*Nome:* ${nome}\n*Telefone:* ${telefone}`;
-      if (relato.trim() !== '') {
-        customMessage += `\n*Resumo:* ${relato}`;
-      } else {
-        customMessage += `\n*Assunto:* Preciso de ajuda com direitos trabalhistas.`;
-      }
-
-      // Open WhatsApp directly with the filled data
-      window.open(getWhatsAppUrl(customMessage), '_blank');
-      
-      // Optional: Clear form after submission or show a "thanks" message replacing form
-      contactForm.innerHTML = `
-        <div style="text-align: center; padding: 30px; background: #f0fdf4; border-radius: 8px; border: 1px solid #bbf7d0;">
-          <h4 style="color: #166534; font-size: 1.2rem; margin-bottom: 10px;">Enviado com sucesso!</h4>
-          <p style="color: #15803d; font-size: 1rem;">Você será redirecionado para o nosso WhatsApp para continuar o atendimento.</p>
-        </div>
-      `;
-    });
-  }
-
-  // 3. Navbar scroll effect (add shadow when scrolling down)
+  // 3. Navbar scroll effect
   const navbar = document.querySelector('.navbar');
   window.addEventListener('scroll', () => {
     if (window.scrollY > 20) {
@@ -65,4 +30,190 @@ document.addEventListener('DOMContentLoaded', () => {
       navbar.style.padding = '15px 0';
     }
   });
+
+  // Chatbot Logic Initiation
+  initChatBot();
 });
+
+function initChatBot() {
+  const chatBody = document.getElementById('chat-body');
+  const chatFooter = document.getElementById('chat-footer');
+  const chatProgressBar = document.getElementById('chat-progress-bar');
+  const restartBtn = document.getElementById('chat-restart');
+  
+  if (!chatBody || !chatFooter) return;
+
+  const isEnglish = document.documentElement.lang === 'en';
+  
+  const translations = {
+    step1_bot: isEnglish ? "Hello! Let's quickly check your case. What is your name?" : "Olá! Vamos fazer uma verificação rápida do seu caso. Qual é o seu nome?",
+    step2_bot: isEnglish ? "Do you have a formal job contract (registered)?" : "Você tem ou tinha carteira assinada no emprego em que o problema ocorreu?",
+    step2_opts: isEnglish ? ["Yes", "No"] : ["Sim", "Não"],
+    step3_bot: isEnglish ? "What is your main issue?" : "Qual é o principal problema que você identificou?",
+    step3_opts: isEnglish 
+      ? ["Unpaid overtime", "Unfair dismissal", "Workplace harassment", "No formal contract", "Other"]
+      : ["Horas extras não pagas", "Demissão injusta/verbas retidas", "Assédio moral", "Trabalho sem registro", "Outro detalhe"],
+    step4_bot: isEnglish ? "Have you been fired recently?" : "Você foi demitido recentemente?",
+    step4_opts: isEnglish ? ["Yes", "No"] : ["Sim", "Não"],
+    step5_bot: isEnglish ? "How would you like to be contacted?" : "Como você prefere ser contatado pela nossa equipe?",
+    step5_opts: isEnglish ? ["WhatsApp message", "Phone call"] : ["Mensagem de WhatsApp", "Ligação"],
+    final_bot: isEnglish ? "Great. Based on your answers, you may have a valid case. Let our specialists analyze the details and calculate exactly what you can claim." : "Excelente. Com base nas suas respostas, verificamos que você pode ter uma causa ganha. Deixe nossos especialistas avaliarem para descobrir os valores exatos de indenização.",
+    final_btn: isEnglish ? "Continue on WhatsApp" : "Continuar no WhatsApp",
+    placeholder: isEnglish ? "Type your answer..." : "Digite sua resposta...",
+    send: isEnglish ? "Send" : "Enviar",
+    typingUser: isEnglish ? "Thinking..." : "Digitando..."
+  };
+
+  const steps = [
+    { type: 'input', question: translations.step1_bot, field: 'name' },
+    { type: 'choice', question: translations.step2_bot, options: translations.step2_opts, field: 'contract' },
+    { type: 'choice', question: translations.step3_bot, options: translations.step3_opts, field: 'issue' },
+    { type: 'choice', question: translations.step4_bot, options: translations.step4_opts, field: 'fired' },
+    { type: 'choice', question: translations.step5_bot, options: translations.step5_opts, field: 'contactType' }
+  ];
+
+  let currentStep = 0;
+  let userData = {};
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      chatBody.scrollTo({ top: chatBody.scrollHeight, behavior: 'smooth' });
+    }, 50);
+  }
+
+  function showTyping(callback) {
+    chatFooter.innerHTML = '';
+    const typingId = 'typing-' + Date.now();
+    chatBody.innerHTML += `
+      <div class="typing-indicator" id="${typingId}">
+        <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+      </div>
+    `;
+    scrollToBottom();
+    
+    // Simulate thinking delay between 1.0 to 1.5 secs
+    setTimeout(() => {
+      const typingEl = document.getElementById(typingId);
+      if (typingEl) typingEl.remove();
+      callback();
+    }, 1200); 
+  }
+
+  function addBotMessage(text) {
+    chatBody.innerHTML += `<div class="chat-message bot">${text}</div>`;
+    scrollToBottom();
+  }
+
+  function addUserMessage(text) {
+    chatBody.innerHTML += `<div class="chat-message user">${text}</div>`;
+    scrollToBottom();
+  }
+
+  function updateProgress() {
+    const progress = (currentStep / steps.length) * 100;
+    chatProgressBar.style.width = `${progress}%`;
+  }
+
+  function renderStep() {
+    if (currentStep >= steps.length) {
+      finishChat();
+      return;
+    }
+    
+    updateProgress();
+    const step = steps[currentStep];
+
+    showTyping(() => {
+      addBotMessage(step.question);
+      
+      if (step.type === 'input') {
+        chatFooter.innerHTML = `
+          <div class="chat-input-wrapper">
+             <input type="text" id="chat-text-input" placeholder="${translations.placeholder}" autocomplete="off" />
+             <button class="chat-send-btn" id="chat-text-submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+             </button>
+          </div>
+        `;
+        const inputStr = document.getElementById('chat-text-input');
+        const btnStr = document.getElementById('chat-text-submit');
+        
+        // Timeout to let mobile KB show naturally if desired. Default focus usually zooms screen slightly on mobile, wait until touch.
+        // inputStr.focus();
+        
+        const submitHandler = () => {
+          const val = inputStr.value.trim();
+          if (val) handleAnswer(val, step.field);
+        };
+        
+        btnStr.addEventListener('click', submitHandler);
+        inputStr.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') submitHandler();
+        });
+        
+      } else if (step.type === 'choice') {
+        let optsHtml = '<div class="chat-options">';
+        step.options.forEach(opt => {
+          optsHtml += `<button class="chat-option-btn">${opt}</button>`;
+        });
+        optsHtml += '</div>';
+        chatFooter.innerHTML = optsHtml;
+        
+        const btns = chatFooter.querySelectorAll('.chat-option-btn');
+        btns.forEach(btn => {
+          btn.addEventListener('click', () => {
+             handleAnswer(btn.innerText, step.field);
+          });
+        });
+      }
+    });
+  }
+
+  function handleAnswer(answer, field) {
+    userData[field] = answer;
+    chatFooter.innerHTML = '';
+    addUserMessage(answer);
+    currentStep++;
+    renderStep();
+  }
+
+  function finishChat() {
+    chatProgressBar.style.width = '100%';
+    showTyping(() => {
+      addBotMessage(translations.final_bot);
+      chatFooter.innerHTML = `
+        <button class="chat-cta-btn" id="chat-finish-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          ${translations.final_btn}
+        </button>
+      `;
+      
+      document.getElementById('chat-finish-btn').addEventListener('click', () => {
+         let messageTemplate = '';
+         if(isEnglish) {
+           messageTemplate = `Hello, I would like to analyze my labor case.\n\nName: ${userData.name}\nFormal contract: ${userData.contract}\nIssue: ${userData.issue}\nFired recently: ${userData.fired}\nPreferred contact: ${userData.contactType}\n\nI would like to know if I have compensation to receive.`;
+         } else {
+           messageTemplate = `Olá, gostaria de analisar o meu caso trabalhista.\n\nNome: ${userData.name}\nCarteira Assinada: ${userData.contract}\nProblema: ${userData.issue}\nDemitido testamente: ${userData.fired}\nContato Preferido: ${userData.contactType}\n\nGostaria de saber se tenho indenização a receber.`;
+         }
+         window.open(getWhatsAppUrl(messageTemplate), '_blank');
+      });
+      scrollToBottom();
+    });
+  }
+
+  function startChat() {
+    chatBody.innerHTML = '';
+    chatFooter.innerHTML = '';
+    currentStep = 0;
+    userData = {};
+    chatProgressBar.style.width = '0%';
+    renderStep();
+  }
+
+  if(restartBtn) {
+    restartBtn.addEventListener('click', startChat);
+  }
+
+  // Start on load
+  startChat();
+}
