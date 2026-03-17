@@ -150,7 +150,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); line-height: 1.25; co
 
 /* Offer Section */
 .offer-section { padding: 100px 0; background-color: var(--primary-color); background-image: linear-gradient(135deg, #020617 0%, #0f172a 100%); color: var(--white); }
-.offer-section h2 { font-size: 2.5rem; margin-bottom: 50px; }
+.offer-section h2 { font-size: 2.5rem; margin-bottom: 50px; color: var(--white); }
 .offer-boxes { display: flex; justify-content: center; gap: 30px; max-width: 900px; margin: 0 auto; }
 .offer-box { flex: 1; background-color: var(--white); padding: 40px 30px; border-radius: 12px; text-align: center; color: var(--text-main); box-shadow: var(--shadow-md); }
 .offer-box h3 { font-size: 1.4rem; font-family: var(--font-body); color: var(--primary-dark); margin-bottom: 15px; font-weight: 700; }
@@ -194,11 +194,11 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); line-height: 1.25; co
 .aggressive-title { font-size: 1.8rem; margin-bottom: 30px; font-family: var(--font-heading); color: var(--primary-color); }
 
 /* Footer */
-footer { background-color: var(--primary-dark); color: var(--text-muted); padding: 50px 0 30px; text-align: center; font-size: 0.95rem; }
+footer { background-color: var(--primary-dark); color: #94a3b8; padding: 50px 0 30px; text-align: center; font-size: 0.95rem; }
 .footer-links p { margin-bottom: 10px; }
-.footer-links strong { color: #94a3b8; }
-.disclaimer-legal { max-width: 800px; margin: 30px auto; padding: 20px; border-top: 1px solid #1e293b; border-bottom: 1px solid #1e293b; font-size: 0.85rem; line-height: 1.6; color: #475569; }
-.copyright { margin-top: 20px; font-size: 0.9rem; }
+.footer-links strong { color: #cbd5e1; }
+.disclaimer-legal { max-width: 800px; margin: 30px auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; line-height: 1.6; color: #64748b; }
+.copyright { margin-top: 20px; font-size: 0.9rem; color: #64748b; }
 
 /* Floating WhatsApp Button */
 .floating-wpp { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background-color: var(--whatsapp-color); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); z-index: 1000; transition: var(--transition); }
