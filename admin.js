@@ -476,3 +476,41 @@ function saveAndPopulate() {
         waInput.dispatchEvent(new Event('input'));
     }
 }
+
+// --- COPY DEMO LINK ---
+const btnCopyLink = document.getElementById('btn-copy-link');
+const shareLinkDisplay = document.getElementById('share-link-display');
+
+if (btnCopyLink && shareLinkDisplay) {
+    let demoUrl = window.location.href.split('?')[0].replace(/\/admin\.html.*/, '/index.html');
+    shareLinkDisplay.innerText = demoUrl;
+    
+    btnCopyLink.addEventListener('click', () => {
+        navigator.clipboard.writeText(demoUrl);
+        const originalText = btnCopyLink.innerText;
+        btnCopyLink.innerText = '✅ Copied!';
+        
+        const toast = document.getElementById('toast');
+        const icon = toast.querySelector('.toast-icon');
+        const strong = toast.querySelector('strong');
+        const desc = document.getElementById('toast-desc');
+        
+        icon.innerText = '🔗';
+        strong.innerText = 'Demo link copied!';
+        desc.innerText = 'Share this link directly with your clients.';
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            btnCopyLink.innerText = originalText;
+        }, 2000);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                icon.innerText = '✅';
+                strong.innerText = 'Changes saved successfully';
+                desc.innerText = 'Your template has been updated securely.';
+            }, 500);
+        }, 3000);
+    });
+}
