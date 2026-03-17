@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How it Works - Template Setup</title>
+    <link rel="stylesheet" href="/how-it-works.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <strong>Template Setup</strong>
+                <span>Legal Marketing System</span>
+            </div>
+            <a href="/admin.html" class="nav-btn">Admin Panel &rarr;</a>
+        </div>
+    </header>
+
+    <!-- SECTION 1: HERO -->
+    <section class="hero-section">
+        <div class="container hero-container">
+            <div class="hero-badge fade-up" style="animation-delay: 0.1s;">⚡ Fast & Simple Integration</div>
+            <h1 class="fade-up" style="animation-delay: 0.2s;">Set up your landing page in <span class="highlight-gold">2 minutes</span></h1>
+            <p class="hero-subtitle fade-up" style="animation-delay: 0.3s;">No coding. No complexity. Just a clear, pre-optimized lawyer template built to generate results.</p>
+            
+            <div class="hero-cta fade-up" style="animation-delay: 0.4s;">
+                <a href="/admin.html" class="btn btn-primary btn-large glow-btn">Open Admin Panel</a>
+            </div>
+
+            <div class="hero-features fade-up" style="animation-delay: 0.5s;">
+                <div class="feature-pill"><span class="feature-icon">🚫</span> No coding required</div>
+                <div class="feature-pill"><span class="feature-icon">⚡</span> Works instantly</div>
+                <div class="feature-pill"><span class="feature-icon">🚀</span> Optimized for conversions</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: 3 STEP PROCESS -->
+    <section class="steps-section">
+        <div class="container">
+            <h2 class="section-title text-center">Your path to receiving clients</h2>
+            <div class="steps-grid">
+                
+                <!-- Step 1 -->
+                <div class="step-card fade-up">
+                    <div class="step-icon-box">
+                        <span class="step-number">1</span>
+                        <div class="step-icon">⚙️</div>
+                    </div>
+                    <h3>Open the Admin Panel</h3>
+                    <p>Access the seamless, hidden admin panel and start customizing your landing page instantly layout directly in your browser.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card fade-up" style="animation-delay: 0.2s;">
+                    <div class="step-icon-box">
+                        <span class="step-number">2</span>
+                        <div class="step-icon">💬</div>
+                    </div>
+                    <h3>Add your WhatsApp and Name</h3>
+                    <p>Enter your unique contact details, personal law firm branding, and basic information. Everything updates automatically.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card fade-up" style="animation-delay: 0.4s;">
+                    <div class="step-icon-box">
+                        <span class="step-number">3</span>
+                        <div class="step-icon">🌍</div>
+                    </div>
+                    <h3>Save and Publish</h3>
+                    <p>Click save and your specialized legal landing page is ready. Copy your link and start receiving targeted clients.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: FINAL CTA -->
+    <section class="final-section text-center">
+        <div class="container final-container">
+            <div class="final-box fade-up">
+                <h2>Your page is <span class="highlight-gold">ready in minutes</span></h2>
+                <p>Stop losing potential cases to outdated legal websites. Activate your high-converting WhatsApp lead machine now.</p>
+                
+                <div class="final-buttons">
+                    <a href="/admin.html" class="btn btn-primary btn-large glow-btn">Open Admin Panel</a>
+                    <a href="/index-en.html" target="_blank" class="btn btn-outline btn-large">View Demo Page</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content text-center">
+             <p>&copy; 2026 Admin Panel & Setup Experience for Premium Landing Pages. Built for conversion.</p>
+        </div>
+    </footer>
+
+    <!-- Intersection Observer for Scroll Animations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const faders = document.querySelectorAll('.fade-up');
+            
+            const appearOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+            
+            const appearOnScroll = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('appear');
+                    observer.unobserve(entry.target);
+                });
+            }, appearOptions);
+            
+            faders.forEach(fader => {
+                appearOnScroll.observe(fader);
+            });
+        });
+    </script>
+</body>
+</html>

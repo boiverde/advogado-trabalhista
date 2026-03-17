@@ -7,7 +7,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         en: resolve(__dirname, 'index-en.html'),
-        admin: resolve(__dirname, 'admin.html')
+        admin: resolve(__dirname, 'admin.html'),
+        howItWorks: resolve(__dirname, 'how-it-works.html')
       }
     }
   }
