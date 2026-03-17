@@ -100,12 +100,6 @@ function applyDynamicConfig() {
     }
     
     // Sections toggle
-    if (c.showFeatures === false) {
-        document.querySelectorAll('.template-features').forEach(el => el.style.display = 'none');
-    }
-    if (c.showPerfectFor === false) {
-        document.querySelectorAll('.perfect-for').forEach(el => el.style.display = 'none');
-    }
     if (c.footerCopyright) {
         replaceText('.copyright', c.footerCopyright);
     }

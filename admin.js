@@ -65,8 +65,6 @@ const schema = {
   settings: {
     id: "settings", icon: "⚙️", title: "8. Display Settings & Footer",
     fields: [
-      { name: "showFeatures", label: "Show Template Features Section", type: "checkbox" },
-      { name: "showPerfectFor", label: "Show Perfect For Section", type: "checkbox" },
       { name: "footerCopyright", label: "Footer Copyright Text", type: "text" }
     ]
   }
@@ -128,12 +126,8 @@ function populateForm(cfg) {
   // Special defaults for toggles if config is empty
   if(Object.keys(cfg).length === 0) {
       cfg.showChatbot = true;
-      cfg.showFeatures = true;
-      cfg.showPerfectFor = true;
   } else {
       if(cfg.showChatbot === undefined) cfg.showChatbot = true;
-      if(cfg.showFeatures === undefined) cfg.showFeatures = true;
-      if(cfg.showPerfectFor === undefined) cfg.showPerfectFor = true;
   }
 
   Object.keys(cfg).forEach(key => {

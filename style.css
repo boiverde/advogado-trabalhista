@@ -52,15 +52,6 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); line-height: 1.25; co
 .highlight-gold { color: var(--accent-gold); }
 .highlight-gold-text { color: var(--accent-gold); font-weight: 800; font-size: 1.2rem; }
 
-/* Fiverr Template Banner */
-.template-banner { background-color: #222222; color: #fff; padding: 12px 0; font-size: 0.95rem; text-align: center; position: relative; z-index: 1001;}
-.banner-content { display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;}
-.banner-badge { background: #1DBf73; color: #fff; padding: 5px 14px; border-radius: 4px; font-weight: 800; font-family: var(--font-body); font-size: 0.85rem;}
-.banner-text { opacity: 0.95; font-weight: 500;}
-.lang-switcher { margin-left: 15px; font-weight: 800; }
-.lang-switcher a { color: #888; text-decoration: none; padding: 0 5px; transition: color 0.3s;}
-.lang-switcher a:hover, .lang-switcher a.active { color: #1DBf73; }
-
 /* Navigation */
 .navbar { background-color: var(--primary-dark); padding: 16px 0; position: sticky; width: 100%; top: 0; z-index: 1000; border-bottom: 2px solid var(--accent-gold); box-shadow: var(--shadow-md); }
 .nav-content { display: flex; justify-content: center; align-items: center; }
@@ -171,21 +162,6 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); line-height: 1.25; co
 .client-info h4 { font-family: var(--font-body); font-weight: 700; color: var(--primary-color); }
 .client-info .role { font-size: 0.9rem; color: var(--text-muted); }
 
-/* Perfect For Section */
-.perfect-for { padding: 80px 0; background-color: var(--white); border-top: 1px solid #e2e8f0;}
-.perfect-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; max-width: 800px; margin: 40px auto 0; }
-.perfect-item { background: var(--bg-light); color: var(--primary-dark); font-weight: 600; padding: 12px 24px; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 1.05rem; box-shadow: var(--shadow-sm); transition: var(--transition); }
-.perfect-item:hover { background: var(--white); border-color: var(--accent-gold); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-
-/* Template Features */
-.template-features { padding: 80px 0; background-color: var(--primary-dark); color: var(--white); text-align: center; border-bottom: 4px solid var(--accent-gold); }
-.features-box { max-width: 800px; margin: 0 auto; background: rgba(255, 255, 255, 0.05); padding: 50px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
-.features-box h2 { color: var(--accent-gold); margin-bottom: 30px; font-size: 2.2rem; }
-.features-list { list-style: none; text-align: left; margin: 0 auto; display: inline-block; }
-.features-list li { font-size: 1.15rem; color: #e2e8f0; padding: 12px 0; font-weight: 400; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.features-list li:last-child { border-bottom: none; }
-.features-list strong { color: var(--white); font-weight: 700;}
-
 /* Final CTA */
 .final-cta { padding: 100px 0; background-color: var(--bg-light); border-top: 1px solid #e2e8f0; }
 .final-cta h2 { font-size: 2.8rem; color: var(--primary-color); font-weight: 800; }
@@ -250,8 +226,6 @@ footer { background-color: var(--primary-dark); color: #94a3b8; padding: 50px 0 
 }
 
 @media (max-width: 768px) {
-  .template-banner { font-size: 0.8rem; padding: 12px 10px; }
-  .banner-badge { display: block; margin: 0 auto 5px; width: fit-content;}
   .hero h1 { font-size: 2.2rem; }
   .btn-huge { font-size: 1.05rem; padding: 18px 10px; width: 100%; max-width: 100%;}
   .btn-large { font-size: 1.05rem; padding: 16px 10px; width: 100%; max-width: 100%;}
@@ -264,6 +238,4 @@ footer { background-color: var(--primary-dark); color: #94a3b8; padding: 50px 0 
   .aggressive-title { font-size: 1.3rem; }
   .cases-grid { grid-template-columns: 1fr; }
   .lawyer-photo { width: 150px; height: 150px; }
-  .features-box { padding: 30px 20px; }
-  .features-list li { font-size: 1rem; }
 }
