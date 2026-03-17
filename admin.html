@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Template Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+                <p>Template Customization</p>
+            </div>
+            <nav id="nav-links">
+                <!-- injected by JS -->
+            </nav>
+            <div class="sidebar-actions">
+                <button id="btn-save" class="btn btn-save">💾 Save Changes</button>
+                <button id="btn-reset" class="btn btn-reset">🗑 Reset to Default</button>
+                <button id="btn-export" class="btn btn-export">📤 Export Config JSON</button>
+                <div class="file-btn-wrapper">
+                  <button class="btn btn-export" style="pointer-events:none;">📥 Import Config JSON</button>
+                  <input type="file" id="btn-import" accept=".json">
+                </div>
+                <a href="/index.html" class="btn btn-preview" target="_blank">👁 Preview (BR)</a>
+                <a href="/index-en.html" class="btn btn-preview" target="_blank" style="background:#fef08a; color:#0f172a;">👁 Preview (EN)</a>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="content-header">
+                <h1 style="color:var(--primary); margin:0;">Customize Your Landing Page</h1>
+                <p style="color:#64748b; margin-top:5px;">Changes are saved locally in your browser. Open the Live Preview to see them applied instantly.</p>
+            </div>
+            <form id="admin-form">
+                <!-- injected by js -->
+            </form>
+        </main>
+    </div>
+    <div id="toast" class="toast">✅ Changes Saved Successfully!</div>
+    <script type="module" src="/admin.js"></script>
+</body>
+</html>

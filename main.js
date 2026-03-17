@@ -1,11 +1,134 @@
+// START CONFIG INJECTION (DEMO CUSTOMIZATION)
+function applyDynamicConfig() {
+  const confRaw = localStorage.getItem('lawyer_template_config');
+  if (!confRaw) {
+     window.WHATSAPP_NUMBER_OVERRIDE = null;
+     return; // Use default hardcoded
+  }
+  
+  try {
+    const c = JSON.parse(confRaw);
+    
+    function replaceText(selector, text) {
+      if(!text) return;
+      document.querySelectorAll(selector).forEach(el => {
+         // Keep text or simple HTML tags
+         el.innerHTML = text; 
+      });
+    }
+    
+    // 1. Branding
+    replaceText('.logo strong, footer .footer-links p:first-child strong', c.lawFirmName);
+    replaceText('.logo span', c.lawFirmSubtitle);
+    replaceText('.profile-info h2', c.lawyerName);
+    
+    if(c.lawyerImage) {
+      document.querySelectorAll('.lawyer-photo').forEach(el => el.setAttribute('src', c.lawyerImage));
+    }
+    
+    // 2. Contact overrides
+    if(c.whatsappNumber) {
+       window.WHATSAPP_NUMBER_OVERRIDE = c.whatsappNumber; 
+    }
+    if(c.contactEmail) {
+       document.querySelectorAll('footer').forEach(el => {
+           el.innerHTML = el.innerHTML.replace(/seu@email\.com\.br/g, c.contactEmail).replace(/your@email\.com/g, c.contactEmail);
+       });
+    }
+    
+    if(c.ctaMain) {
+      document.querySelectorAll('.btn-cta:not(#chat-finish-btn):not(.floating-wpp)').forEach(el => {
+        const svg = el.querySelector('svg');
+        el.innerHTML = '';
+        if(svg) el.appendChild(svg);
+        el.appendChild(document.createTextNode(' ' + c.ctaMain));
+      });
+    }
+    replaceText('.btn-primary', c.ctaSecondary);
+    
+    // 3. Hero
+    replaceText('.hero-badge', c.heroBadge);
+    replaceText('.hero h1', c.heroHeadline);
+    replaceText('.subheadline', c.heroSubheadline);
+    replaceText('.urgency-warning', c.heroUrgency);
+    
+    // 4. Social Proof
+    const authNums = document.querySelectorAll('.authority-text');
+    const authLbls = document.querySelectorAll('.authority-label');
+    if(authNums.length >= 3 && authLbls.length >= 3) {
+        if(c.stat1Value) authNums[0].innerHTML = c.stat1Value;
+        if(c.stat1Label) authLbls[0].innerHTML = c.stat1Label;
+        if(c.stat2Value) authNums[1].innerHTML = c.stat2Value;
+        if(c.stat2Label) authLbls[1].innerHTML = c.stat2Label;
+        if(c.stat3Value) authNums[2].innerHTML = c.stat3Value;
+        if(c.stat3Label) authLbls[2].innerHTML = c.stat3Label;
+    }
+    
+    // 5. Case Result Override (First item)
+    if(c.caseTitle) {
+        const case1 = document.querySelector('.case-card');
+        if(case1) {
+            if(c.caseTitle) case1.querySelector('.case-title').innerHTML = c.caseTitle;
+            if(c.caseProblem) case1.querySelector('.case-body p:nth-child(1)').innerHTML = `<strong>O Problema / The Issue:</strong> ${c.caseProblem}`;
+            if(c.caseResult) case1.querySelector('.case-body p:nth-child(2)').innerHTML = `<strong>O Resultado / The Result:</strong> ${c.caseResult}`;
+            if(c.caseAmount) case1.querySelector('.case-value').innerHTML = `Valor / Amount: <span class="highlight-gold-text">${c.caseAmount}</span>`;
+        }
+    }
+
+    // 6. Testimonial Override (First item)
+    if(c.testName) {
+        const test1 = document.querySelector('.testimonial-card');
+        if(test1) {
+            if(c.testName) test1.querySelector('.client-info h4').innerHTML = c.testName;
+            if(c.testRole) test1.querySelector('.client-info .role').innerHTML = c.testRole;
+            if(c.testText) test1.querySelector('.review').innerHTML = `"${c.testText}"`;
+        }
+    }
+  
+    // Virtual Assistant Toggle
+    if (c.showChatbot === false) {
+        const chatSec = document.getElementById('avaliacao');
+        if(chatSec) chatSec.style.display = 'none';
+    }
+    
+    if (c.assistantName) {
+        replaceText('.chat-title h3', c.assistantName);
+        window.CHATBOT_NAME_OVERRIDE = c.assistantName;
+    }
+    if (c.assistantCta) {
+        window.CHATBOT_CTA_OVERRIDE = c.assistantCta;
+    }
+    
+    // Sections toggle
+    if (c.showFeatures === false) {
+        document.querySelectorAll('.template-features').forEach(el => el.style.display = 'none');
+    }
+    if (c.showPerfectFor === false) {
+        document.querySelectorAll('.perfect-for').forEach(el => el.style.display = 'none');
+    }
+    if (c.footerCopyright) {
+        replaceText('.copyright', c.footerCopyright);
+    }
+
+  } catch (err) {
+      console.warn('Failed to parse admin customizations.', err);
+  }
+}
+
+// Inject immediately on load since <script type="module"> executes after DOM is ready
+applyDynamicConfig();
+
+// --- END CONFIG INJECTION ---
+
 // WhatsApp Configuration
 const WHATSAPP_NUMBER = '5511999999999'; // Example number, replace with real one
 const DEFAULT_MESSAGE = 'Olá! Gostaria de falar com um advogado especialista em direito do trabalho. Vim pelo site.';
 
 // Function to generate WhatsApp URL
 function getWhatsAppUrl(message) {
+  const numberToUse = window.WHATSAPP_NUMBER_OVERRIDE || WHATSAPP_NUMBER;
   const text = encodeURIComponent(message || DEFAULT_MESSAGE);
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+  return `https://wa.me/${numberToUse}?text=${text}`;
 }
 
 // 1. Update all generic WhatsApp Links on page load
@@ -19,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Navbar scroll effect
+  // Navbar scroll effect
   const navbar = document.querySelector('.navbar');
   window.addEventListener('scroll', () => {
     if (window.scrollY > 20) {
@@ -58,7 +181,7 @@ function initChatBot() {
     step5_bot: isEnglish ? "How would you like to be contacted?" : "Como você prefere ser contatado pela nossa equipe?",
     step5_opts: isEnglish ? ["WhatsApp message", "Phone call"] : ["Mensagem de WhatsApp", "Ligação"],
     final_bot: isEnglish ? "Great. Based on your answers, you may have a valid case. Let our specialists analyze the details and calculate exactly what you can claim." : "Excelente. Com base nas suas respostas, verificamos que você pode ter uma causa ganha. Deixe nossos especialistas avaliarem para descobrir os valores exatos de indenização.",
-    final_btn: isEnglish ? "Continue on WhatsApp" : "Continuar no WhatsApp",
+    final_btn: window.CHATBOT_CTA_OVERRIDE || (isEnglish ? "Continue on WhatsApp" : "Continuar no WhatsApp"),
     placeholder: isEnglish ? "Type your answer..." : "Digite sua resposta...",
     send: isEnglish ? "Send" : "Enviar",
     typingUser: isEnglish ? "Thinking..." : "Digitando..."
@@ -138,9 +261,6 @@ function initChatBot() {
         const inputStr = document.getElementById('chat-text-input');
         const btnStr = document.getElementById('chat-text-submit');
         
-        // Timeout to let mobile KB show naturally if desired. Default focus usually zooms screen slightly on mobile, wait until touch.
-        // inputStr.focus();
-        
         const submitHandler = () => {
           const val = inputStr.value.trim();
           if (val) handleAnswer(val, step.field);
@@ -193,7 +313,7 @@ function initChatBot() {
          if(isEnglish) {
            messageTemplate = `Hello, I would like to analyze my labor case.\n\nName: ${userData.name}\nFormal contract: ${userData.contract}\nIssue: ${userData.issue}\nFired recently: ${userData.fired}\nPreferred contact: ${userData.contactType}\n\nI would like to know if I have compensation to receive.`;
          } else {
-           messageTemplate = `Olá, gostaria de analisar o meu caso trabalhista.\n\nNome: ${userData.name}\nCarteira Assinada: ${userData.contract}\nProblema: ${userData.issue}\nDemitido testamente: ${userData.fired}\nContato Preferido: ${userData.contactType}\n\nGostaria de saber se tenho indenização a receber.`;
+           messageTemplate = `Olá, gostaria de analisar o meu caso trabalhista.\n\nNome: ${userData.name}\nCarteira Assinada: ${userData.contract}\nProblema: ${userData.issue}\nDemitido recentemente: ${userData.fired}\nContato Preferido: ${userData.contactType}\n\nGostaria de saber se tenho indenização a receber.`;
          }
          window.open(getWhatsAppUrl(messageTemplate), '_blank');
       });
